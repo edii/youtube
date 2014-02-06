@@ -328,7 +328,7 @@ class Module extends Component
 			if ($this->_modules[$id] instanceof Module) {
 				return $this->_modules[$id];
 			} elseif ($load) {
-				Yii::trace("Loading module: $id", __METHOD__);
+				
 				return $this->_modules[$id] = Yii::createObject($this->_modules[$id], $id, $this);
 			}
 		}
@@ -551,14 +551,14 @@ class Module extends Component
 		if (is_array($parts)) {
 			/** @var Controller $controller */
 			list($controller, $actionID) = $parts;
-			$oldController = Yii::$app->controller;
-			Yii::$app->controller = $controller;
+			$oldController = init::$app->controller;
+			init::$app->controller = $controller;
 			$result = $controller->runAction($actionID, $params);
-			Yii::$app->controller = $oldController;
+			init::$app->controller = $oldController;
 			return $result;
 		} else {
 			$id = $this->getUniqueId();
-			throw new InvalidRouteException('Unable to resolve the request "' . ($id === '' ? $route : $id . '/' . $route) . '".');
+			throw new Exception('Unable to resolve the request "' . ($id === '' ? $route : $id . '/' . $route) . '".');
 		}
 	}
 
@@ -601,11 +601,11 @@ class Module extends Component
 				return false;
 			}
 			$className = ltrim($this->controllerNamespace . '\\' . $className, '\\');
-			Yii::$classMap[$className] = $classFile;
-			if (is_subclass_of($className, 'yii\base\Controller')) {
+			init::$classMap[$className] = $classFile;
+			if (is_subclass_of($className, 'core\Controller')) {
 				$controller = new $className($id, $this);
-			} elseif (YII_DEBUG) {
-				throw new InvalidConfigException("Controller class must extend from \\yii\\base\\Controller.");
+			} elseif (DEBUG) {
+				throw new Exception("Controller class must extend from \\yii\\base\\Controller.");
 			}
 		}
 

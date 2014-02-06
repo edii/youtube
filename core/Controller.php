@@ -4,7 +4,7 @@ namespace core;
 use init;
 
 class Controller extends Component {
-    public $id;
+        public $id;
 	/**
 	 * @var Module $module the module that this controller belongs to.
 	 */
@@ -41,7 +41,7 @@ class Controller extends Component {
 	{
 		$this->id = $id;
 		$this->module = $module;
-		parent::__construct($config);
+		//parent::__construct($config);
 	}
 
 	/**

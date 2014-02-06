@@ -85,9 +85,9 @@ class Component
 			}
 		}
 		if (method_exists($this, 'get' . $name)) {
-			throw new InvalidCallException('Setting read-only property: ' . get_class($this) . '::' . $name);
+			throw new Exception('Setting read-only property: ' . get_class($this) . '::' . $name);
 		} else {
-			throw new UnknownPropertyException('Setting unknown property: ' . get_class($this) . '::' . $name);
+			throw new Exception('Setting unknown property: ' . get_class($this) . '::' . $name);
 		}
 	}
 
@@ -149,7 +149,7 @@ class Component
 			}
 		}
 		if (method_exists($this, 'get' . $name)) {
-			throw new InvalidCallException('Unsetting read-only property: ' . get_class($this) . '.' . $name);
+			throw new Exception('Unsetting read-only property: ' . get_class($this) . '.' . $name);
 		}
 	}
 
@@ -175,7 +175,7 @@ class Component
 			}
 		}
 
-		throw new UnknownMethodException('Calling unknown method: ' . get_class($this) . "::$name()");
+		throw new Exception('Calling unknown method: ' . get_class($this) . "::$name()");
 	}
 
 	/**
@@ -431,8 +431,6 @@ class Component
 				}
 			}
 		}
-		// invoke class-level attached handlers
-		Event::trigger($this, $name, $event);
 	}
 
 	/**

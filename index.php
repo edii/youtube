@@ -15,7 +15,8 @@ class init extends core\Base {
 spl_autoload_register(['init', 'autoload'], true, true);
 init::$classMap = include('/core/classes.php');
 
-$_controller = new core\Controller;
+$application = new core\Application();
+$application->run();
 
 //$_test = spl_autoload_functions();
 //$_test = spl_classes ();
@@ -23,8 +24,5 @@ echo "<pre>";
 var_dump(init::$classMap);
 echo "</pre>";
 
-echo "<pre>";
-var_dump($_controller);
-echo "</pre>";
 // die('BLAAAAAAAAAAAAAAAAAaaaa');
 
