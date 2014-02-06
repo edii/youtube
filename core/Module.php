@@ -143,13 +143,6 @@ class Module extends Component
 	 */
 	public function init()
 	{
-		if ($this->controllerNamespace === null) {
-			$class = get_class($this);
-			if (($pos = strrpos($class, '\\')) !== false) {
-				$this->controllerNamespace = substr($class, 0, $pos) . '\\controllers';
-			}
-		}
-		$this->preloadComponents();
 	}
 
 	/**
@@ -480,60 +473,7 @@ class Module extends Component
 		}
 	}
 
-	/**
-	 * Registers a set of components in this module.
-	 *
-	 * Each component should be specified as a name-value pair, where
-	 * name refers to the ID of the component and value the component or a configuration
-	 * array that can be used to create the component. In the latter case, [[Yii::createObject()]]
-	 * will be used to create the component.
-	 *
-	 * If a new component has the same ID as an existing one, the existing one will be overwritten silently.
-	 *
-	 * The following is an example for setting two components:
-	 *
-	 * ~~~
-	 * [
-	 *     'db' => [
-	 *         'class' => 'yii\db\Connection',
-	 *         'dsn' => 'sqlite:path/to/file.db',
-	 *     ],
-	 *     'cache' => [
-	 *         'class' => 'yii\caching\DbCache',
-	 *         'db' => 'db',
-	 *     ],
-	 * ]
-	 * ~~~
-	 *
-	 * @param array $components components (id => component configuration or instance)
-	 */
-	public function setComponents($components)
-	{
-		foreach ($components as $id => $component) {
-			if (!is_object($component) && isset($this->_components[$id]['class']) && !isset($component['class'])) {
-				// set default component class
-				$component['class'] = $this->_components[$id]['class'];
-			}
-			$this->_components[$id] = $component;
-		}
-	}
-
-	/**
-	 * Loads components that are declared in [[preload]].
-	 * @throws InvalidConfigException if a component or module to be preloaded is unknown
-	 */
-	public function preloadComponents()
-	{
-		foreach ($this->preload as $id) {
-			if ($this->hasComponent($id)) {
-				$this->getComponent($id);
-			} elseif ($this->hasModule($id)) {
-				$this->getModule($id);
-			} else {
-				throw new InvalidConfigException("Unknown component or module: $id");
-			}
-		}
-	}
+	
 
 	/**
 	 * Runs a controller action specified by a route.
@@ -612,25 +552,13 @@ class Module extends Component
 		return isset($controller) ? [$controller, $route] : false;
 	}
 
-	/**
-	 * This method is invoked right before an action of this module is to be executed (after all possible filters.)
-	 * You may override this method to do last-minute preparation for the action.
-	 * Make sure you call the parent implementation so that the relevant event is triggered.
-	 * @param Action $action the action to be executed.
-	 * @return boolean whether the action should continue to be executed.
-	 */
+	
 	public function beforeAction($action)
 	{
 		return true;
 	}
 
-	/**
-	 * This method is invoked right after an action of this module has been executed.
-	 * You may override this method to do some postprocessing for the action.
-	 * Make sure you call the parent implementation so that the relevant event is triggered.
-	 * @param Action $action the action just executed.
-	 * @param mixed $result the action return result.
-	 */
+	
 	public function afterAction($action, &$result)
 	{
 	}
