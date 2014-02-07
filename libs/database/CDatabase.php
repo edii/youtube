@@ -57,47 +57,7 @@ class CDatabase extends CApplicationComponent {
         return $this->_configs;
     }
     
-    protected function _getDefinitions() {
-        $this->_definitions = \init::app()->getDefinition();
-        if(!is_array($this->_definitions) or empty($this->_definitions) or !isset($this->_definitions)) {
-            return null;
-        }
-        
-        if(is_array($this->_definitions)) {
-            if(isset($this->_definitions['databaseDefinition']) and is_array($this->_definitions['databaseDefinition']))
-                $this->setDatabaseDefinition( $this->_definitions['databaseDefinition'] );
-           // if(isset($this->_definitions['boxesDefinition']) and is_array($this->_definitions['boxesDefinition']))
-             //   $this->setBoxesDefinition( $this->_definitions['boxesDefinition'] );
-        }
-        
-        return $this->_definitions;
-        
-    }
     
-      /**
-     * 
-     * load dbDefinition
-     * return array fields from dbDefionitions
-     * 
-     */
-    /*
-    private function _loadDbDefionition() {
-        $_result = array();
-        $_dbDefinition = $this->getDatabaseDefinition();
-        if(is_array($_dbDefinition) and count($_dbDefinition) > 0) {
-            $_sql = '';
-            $_db = $this->getConnection();
-            $options['target'] = 'main';
-            
-            foreach($_dbDefinition['t'] as $key => $value) {
-                $_sql = "SELECT ".$value." FROM ".trim($key);
-                $_result[$key] = $_db -> query($_sql, array(), $options)-> fetchAll();
-            }
-            
-            $this->setDatabaseDefinition( $_result );
-        }
-    }
-    */
     
     public function setProperties(array $properties) {
         foreach ($properties as $property => $value) {
@@ -106,20 +66,6 @@ class CDatabase extends CApplicationComponent {
         }
         return $this;
     }
-    
-    /**
-     * register variable, settings database 
-     * @return databaseDefinition ['t'][['tabel_name'] => '', ['key'] => '']
-     */
-    public function getDatabaseDefinition() {
-        return $this-> _databaseDefinition;
-    }
-    protected function setDatabaseDefinition( array $_databaseDefinition ) {
-        $this-> _databaseDefinition = $_databaseDefinition;
-        return $this-> _databaseDefinition;
-    }
-    
-    
     
     
     
@@ -177,11 +123,6 @@ class CDatabase extends CApplicationComponent {
                             throw new \CDbException('CDatabase failed to open the DB connection.', (int)$e->getCode(), $e->errorInfo);
                     }
                     
-                    
-                   // \init::log('Error in preparing SQL: '.$this->getText(), \CLogger::LEVEL_ERROR,'system.db.CDbCommand');
-                   // $errorInfo = $e instanceof PDOException ? $e->errorInfo : null;
-                   // throw new CDbException(\init::t('yii','CDbCommand failed to prepare the SQL statement: {error}',
-                   //         array('{error}' => $e->getMessage())),(int)$e->getCode(), $errorInfo);
                     
                     
                     

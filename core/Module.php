@@ -419,14 +419,20 @@ class Module extends Component
 	 * @return Component|null the component instance, null if the component does not exist.
 	 * @see hasComponent()
 	 */
-	public function getComponent($id, $load = true)
+	public function getComponent($id, $load = false)
 	{
 		if (isset($this->_components[$id])) {
-			if ($this->_components[$id] instanceof Object) {
-				return $this->_components[$id];
-			} elseif ($load) {
-				return $this->_components[$id] = Yii::createObject($this->_components[$id]);
-			}
+                    
+                    if(file_exists($this->_components[$id])) {
+                        require_once ( $this->_components[$id] );
+                        $_class_name = ucfirst($id);
+                        
+                        if($load) $_oblect = new $_class_name( $load );
+                        else $_oblect = new $_class_name();
+                        
+                        return $this->_components[$id] = $_oblect;
+                    }
+                    
 		}
 		return null;
 	}

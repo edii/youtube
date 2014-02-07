@@ -106,8 +106,12 @@ class Application extends Module
 	 */
 	public function __construct($config = [])
 	{
+                $this->registerCoreComponents();
+            
 		init::$app = $this;
                 $this->setTimeZone('UTC');
+                
+                
                 
 		//Component::__construct($config);
 	}
@@ -345,6 +349,10 @@ class Application extends Module
 		return $this->getComponent('view');
 	}
 
+        
+        public function getYoutube() {
+            return $this->getComponent( 'youtube' );
+        }
 	
 	
 	/**
@@ -497,5 +505,25 @@ class Application extends Module
 			$category .= ':' . $exception->getSeverity();
 		}
 		Yii::error((string)$exception, $category);
+	}
+        
+        
+        public function registerCoreComponents()
+	{
+                $_components = array(
+			'youtube' =>  PATH_LIBS.'/api/Youtube.php',
+                    
+                        'Google_Client' => PATH_LIBS.'/api/Google/Client.php',
+                        'Google_Service_YouTube' => PATH_LIBS.'/api/Google/Service/YouTube.php',
+                        
+                    
+			'view' => 'yii\base\View',
+		);
+            
+                foreach($_components as $_id => $_components) {
+                    $this->setComponent($_id, $_components);
+                }
+                
+		
 	}
 }

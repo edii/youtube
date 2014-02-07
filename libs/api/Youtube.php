@@ -1,6 +1,6 @@
 <?php
 
-namespace api;
+// namespace libs\api;
 
 
 /**
@@ -27,7 +27,7 @@ class Youtube {
      * $youtube = new Youtube(array('key' => 'KEY HERE'))
      * @param array $params 
      */
-    public function __construct($params){
+    public function run($params){
         if(is_array($params) && array_key_exists('key', $params)){
             $this->youtube_key = $params['key'];
         }else{
@@ -305,7 +305,10 @@ class Youtube {
         $params['key'] = $this->youtube_key;
 
         //boilerplates for CURL
-        $tuCurl = curl_init();  
+        $tuCurl = curl_init(); 
+        
+        curl_setopt ($tuCurl, CURLOPT_CAINFO, PATH_LIBS. "/api/cpt/01c52a2d812d77b4995c8459e1373a8d7ed7a7cd-privatekey.p12");
+        
         curl_setopt($tuCurl, CURLOPT_URL, $url.(strpos($url, '?') === FALSE ? '?' : '').http_build_query($params));
         if(strpos($url, 'https') === FALSE){
             curl_setopt($tuCurl, CURLOPT_PORT , 80);
