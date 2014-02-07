@@ -45,10 +45,10 @@
 
     require_once dirname(__FILE__).'/youtube.lib.php';
 
-    $yt = new Youtube(array('user' => 'shadow87edii', 'limit' => 5));
+    $yt = new Youtube(array('user' => 'google', 'limit' => 5));
     
-    //$data = $yt->apiCall();
-    //$videos = $yt->getVideosFromData($data);
+    $data = $yt->apiCall();
+    $videos = $yt->getVideosFromData($data);
 
     //$videos = $yt->getUserSubscriptions();
 
@@ -57,10 +57,14 @@
     //$yt->setOptions(array("time"=>"this_month", 'limit' => 4));
     //$videos = $yt->getStandardFeed("most_viewed");
 
-    $videos = $yt->searchForVideos( array('search' => 'Eminem - Not Afraid', 'limit' => 5) );
+    //$videos = $yt->searchForVideos( array('search' => 'seat race crash', 'limit' => 5) );
     //$videos = $yt->searchForVideos( "seat race crash" );
 
-    //$video = $yt->getSingleVideo("dogM4Wu51tc");
+//    $_video = $yt->getSingleVideo("6bmsspD5_bY");
+//    
+    echo "<pre>";
+    var_dump( $videos );
+    echo "</pre>";
 
     foreach ($videos as $i => $video) {
         $embed = $yt->getEmbedHTML($video); ?>

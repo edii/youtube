@@ -412,6 +412,11 @@ class Youtube {
     }
 
     private function getVideoInfo($entry){
+        
+//        echo "<pre>";
+//        var_dump( $entry );
+//        echo "</pre>";
+        
         $video = array(
             "title" => $entry["title"]['$t'],
             "link" => $entry["link"][0]["href"],
@@ -429,6 +434,17 @@ class Youtube {
 
         if(isset($entry['media$group']['media$description'])){
             $video["description"] = $entry['media$group']['media$description']['$t'];
+        }
+        
+        if(isset($entry['media$group']['media$category'])){
+            $_categoty = $entry['media$group']['media$category'];
+            if(is_array($_categoty) and count($_categoty) > 0) :
+                foreach($_categoty as $_k_i => $_item) :
+                    $video["category"][$_k_i] = $_item['$t'];
+                    $video["category_label"][$_k_i] = $_item['label'];
+                endforeach;
+            endif;
+           
         }
 
         $videoFormats = array();
@@ -669,6 +685,11 @@ class Youtube {
         if ($result === false) {
             return null;
         }
+        
+//        echo "<pre>";
+//        var_dump( json_decode($result) );
+//        echo "</pre>"; die('stop');
+        
         return $result;
     }
 
