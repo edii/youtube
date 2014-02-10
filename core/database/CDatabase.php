@@ -1,5 +1,9 @@
 <?php
 
+namespace core\database;
+
+use init;
+use core\Application as Application;
 /**
  * CDatabase class files.
  *
@@ -7,7 +11,7 @@
  * @copyright Copyright &copy; 2013 
  */
 
-class CDatabase extends CApplicationComponent {
+class CDatabase extends Application {
     
     public static $db = array();
 
@@ -34,7 +38,7 @@ class CDatabase extends CApplicationComponent {
         //if(!empty($properties) and isset($properties))
           //      $this->setProperties( $properties );
         
-        $this->_getDefinitions(); // load definitions from controller
+        // $this->_getDefinitions(); // load definitions from controller
         $this->database();
         // $this->_loadDbDefionition(); // load definitions
     }
@@ -42,7 +46,7 @@ class CDatabase extends CApplicationComponent {
     
     
     protected function _getDb() {
-        $this->_configs = \init::app()->getDb();
+        $this->_configs = \init::$app->getDb();
         
         if(!$this->_configs or !is_array($this->_configs)) {
               

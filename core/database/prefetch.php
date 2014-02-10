@@ -1,5 +1,7 @@
 <?php
+namespace core\database;
 
+use init;
 /**
  * @file
  * Database interface code for engines that need complete control over their

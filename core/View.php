@@ -62,12 +62,9 @@ class View extends Component {
 	public function init()
 	{
 		parent::init();
-		if (is_array($this->theme)) {
-			if (!isset($this->theme['class'])) {
-				$this->theme['class'] = 'yii\base\Theme';
-			}
-			$this->theme = Yii::createObject($this->theme);
-		}
+                
+                ob_start();
+		ob_implicit_flush(false);
 	}
 
 	/**
@@ -97,20 +94,11 @@ class View extends Component {
 	 */
 	protected function findViewFile($view, $context = null)
 	{
-		if (strncmp($view, '@', 1) === 0) {
-			// e.g. "@app/views/main"
-			$file = Yii::getAlias($view);
-		} elseif (strncmp($view, '//', 2) === 0) {
-			// e.g. "//layouts/main"
-			$file = Yii::$app->getViewPath() . DIRECTORY_SEPARATOR . ltrim($view, '/');
-		} elseif (strncmp($view, '/', 1) === 0) {
-			// e.g. "/site/index"
-			if (Yii::$app->controller !== null) {
-				$file = Yii::$app->controller->module->getViewPath() . DIRECTORY_SEPARATOR . ltrim($view, '/');
-			} else {
-				throw new InvalidCallException("Unable to locate view file for view '$view': no active controller.");
-			}
-		} else {
+               
+               
+                if(is_dir(\init::$app->getViewPath())) {
+                    $file = \init::$app->getViewPath(). DIRECTORY_SEPARATOR . ltrim($view, '/');
+                }else {
 			// context required
 			if ($context === null) {
 				$context = $this->context;
@@ -118,9 +106,11 @@ class View extends Component {
 			if ($context instanceof ViewContextInterface) {
 				$file = $context->findViewFile($view);
 			} else {
-				throw new InvalidCallException("Unable to locate view file for view '$view': no active view context.");
+				throw new Exception("Unable to locate view file for view '$view': no active view context.");
 			}
 		}
+                
+              
 
 		if (pathinfo($file, PATHINFO_EXTENSION) !== '') {
 			return $file;
@@ -129,6 +119,7 @@ class View extends Component {
 		if ($this->defaultExtension !== 'php' && !is_file($path)) {
 			$path = $file . '.php';
 		}
+                
 		return $path;
 	}
 
@@ -142,15 +133,15 @@ class View extends Component {
 	 */
 	public function renderFile($viewFile, $params = [], $context = null)
 	{
-		$viewFile = Yii::getAlias($viewFile);
-		if ($this->theme !== null) {
-			$viewFile = $this->theme->applyTo($viewFile);
-		}
-		if (is_file($viewFile)) {
-			$viewFile = FileHelper::localize($viewFile);
-		} else {
-			throw new InvalidParamException("The view file does not exist: $viewFile");
-		}
+//		$viewFile = Yii::getAlias($viewFile);
+//		if ($this->theme !== null) {
+//			$viewFile = $this->theme->applyTo($viewFile);
+//		}
+//		if (is_file($viewFile)) {
+//			$viewFile = FileHelper::localize($viewFile);
+//		} else {
+//			throw new InvalidParamException("The view file does not exist: $viewFile");
+//		}
 
 		$oldContext = $this->context;
 		if ($context !== null) {
@@ -161,7 +152,12 @@ class View extends Component {
 		if ($this->beforeRender($viewFile)) {
 			
 			$ext = pathinfo($viewFile, PATHINFO_EXTENSION);
+                        
+                        
+                
+                        
 			if (isset($this->renderers[$ext])) {
+                            
 				if (is_array($this->renderers[$ext]) || is_string($this->renderers[$ext])) {
 					$this->renderers[$ext] = Yii::createObject($this->renderers[$ext]);
 				}
@@ -169,6 +165,7 @@ class View extends Component {
 				$renderer = $this->renderers[$ext];
 				$output = $renderer->render($this, $viewFile, $params);
 			} else {
+                                
 				$output = $this->renderPhpFile($viewFile, $params);
 			}
 			$this->afterRender($viewFile, $output);
@@ -176,6 +173,8 @@ class View extends Component {
 
 		$this->context = $oldContext;
 
+                // var_dump( $output ); die('stop');
+                
 		return $output;
 	}
 
@@ -188,9 +187,9 @@ class View extends Component {
 	 */
 	public function beforeRender($viewFile)
 	{
-		$event = new ViewEvent($viewFile);
-		$this->trigger(self::EVENT_BEFORE_RENDER, $event);
-		return $event->isValid;
+		//$event = new ViewEvent($viewFile);
+		//$this->trigger(self::EVENT_BEFORE_RENDER, $event);
+		return true;
 	}
 
 	/**
@@ -202,13 +201,14 @@ class View extends Component {
 	 * will be passed back and returned by [[renderFile()]].
 	 */
 	public function afterRender($viewFile, &$output)
-	{
-		if ($this->hasEventHandlers(self::EVENT_AFTER_RENDER)) {
-			$event = new ViewEvent($viewFile);
-			$event->output = $output;
-			$this->trigger(self::EVENT_AFTER_RENDER, $event);
-			$output = $event->output;
-		}
+	{   
+                return $output;
+//		if ($this->hasEventHandlers(self::EVENT_AFTER_RENDER)) {
+//			$event = new ViewEvent($viewFile);
+//			$event->output = $output;
+//			$this->trigger(self::EVENT_AFTER_RENDER, $event);
+//			$output = $event->output;
+//		}
 	}
 
 	/**
@@ -226,10 +226,8 @@ class View extends Component {
 	 */
 	public function renderPhpFile($_file_, $_params_ = [])
 	{
-		ob_start();
-		ob_implicit_flush(false);
 		extract($_params_, EXTR_OVERWRITE);
-		require($_file_);
+                require_once $_file_;
 		return ob_get_clean();
 	}
 

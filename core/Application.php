@@ -2,6 +2,7 @@
 namespace core;
 
 use init;
+use core\database\CDatabase as CDatabase;
 
 class Application extends Module
 {
@@ -25,7 +26,7 @@ class Application extends Module
 	/**
 	 * @var string the application name.
 	 */
-	public $name = 'My Application';
+	public $name = 'Yotube';
 	/**
 	 * @var string the version of this application.
 	 */
@@ -34,17 +35,7 @@ class Application extends Module
 	 * @var string the charset currently used for the application.
 	 */
 	public $charset = 'UTF-8';
-	/**
-	 * @var string the language that is meant to be used for end users.
-	 * @see sourceLanguage
-	 */
-	public $language = 'en';
-	/**
-	 * @var string the language that the application is written in. This mainly refers to
-	 * the language that the messages and view files are written in.
-	 * @see language
-	 */
-	public $sourceLanguage = 'en';
+	
 	/**
 	 * @var Controller the currently active controller instance
 	 */
@@ -53,14 +44,8 @@ class Application extends Module
 	 * @var string|boolean the layout that should be applied for views in this application. Defaults to 'main'.
 	 * If this is false, layout will be disabled.
 	 */
-	public $layout = 'main';
-	/**
-	 * @var integer the size of the reserved memory. A portion of memory is pre-allocated so that
-	 * when an out-of-memory issue occurs, the error handler is able to handle the error with
-	 * the help of this reserved memory. If you set this value to be 0, no memory will be reserved.
-	 * Defaults to 256KB.
-	 */
-	public $memoryReserveSize = 262144;
+	public $layout = 'index';
+	
 	/**
 	 * @var string the requested route
 	 */
@@ -73,18 +58,7 @@ class Application extends Module
 	 * @var array the parameters supplied to the requested action.
 	 */
 	public $requestedParams;
-	/**
-	 * @var array list of installed Yii extensions. Each array element represents a single extension
-	 * with the following structure:
-	 *
-	 * ~~~
-	 * [
-	 *     'name' => 'extension name',
-	 *     'version' => 'version number',
-	 *     'bootstrap' => 'BootstrapClassName',
-	 * ]
-	 * ~~~
-	 */
+	
 	public $extensions = [];
 	/**
 	 * @var \Exception the exception that is being handled currently. When this is not null,
@@ -98,12 +72,7 @@ class Application extends Module
 	private $_memoryReserve;
 
         
-	/**
-	 * Constructor.
-	 * @param array $config name-value pairs that will be used to initialize the object properties.
-	 * Note that the configuration must contain both [[id]] and [[basePath]].
-	 * @throws InvalidConfigException if either [[id]] or [[basePath]] configuration is missing.
-	 */
+	
 	public function __construct($config = [])
 	{
                 $this->registerCoreComponents();
@@ -126,6 +95,20 @@ class Application extends Module
 		parent::init();
 	}
 
+        
+        public function getDB() {
+            return [
+                'main' => [
+                    'driver' => 'mysql',
+                    'database' => 'mvc',
+                    'username' => 'root',
+                    'password' => '',
+                    'host' => 'localhost',
+                    'prefix' => '',
+                    ]  
+            ];
+        }
+        
 	/**
 	 * Initializes the extensions.
 	 * @param array $extensions the extensions to be initialized. Please refer to [[extensions]]
@@ -136,7 +119,7 @@ class Application extends Module
 		foreach ($extensions as $extension) {
 			if (!empty($extension['alias'])) {
 				foreach ($extension['alias'] as $name => $path) {
-					Yii::setAlias($name, $path);
+					\init::setAlias($name, $path);
 				}
 			}
 			if (isset($extension['bootstrap'])) {
@@ -193,7 +176,6 @@ class Application extends Module
 	public function setBasePath($path)
 	{
 		parent::setBasePath($path);
-		Yii::setAlias('@app', $this->getBasePath());
 	}
 
 	/**
@@ -203,11 +185,9 @@ class Application extends Module
 	 */
 	public function run()
 	{
-		$this->trigger(self::EVENT_BEFORE_REQUEST);
-		$response = $this->handleRequest($this->getRequest());
-		$this->trigger(self::EVENT_AFTER_REQUEST);
-		$response->send();
-		return $response->exitStatus;
+            $this->trigger(self::EVENT_BEFORE_REQUEST);    
+            $response = $this->handleRequest($this->getRequest());
+            return $response;
 	}
 
 	/**
@@ -231,15 +211,8 @@ class Application extends Module
 			
 			$this->requestedRoute = $route;
 			$result = $this->runAction($route, $params);
-			if ($result instanceof Response) {
-				return $result;
-			} else {
-				$response = $this->getResponse();
-				if ($result !== null) {
-					$response->data = $result;
-				}
-				return $response;
-			}
+                        return $result;
+                      
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage(), $e->getCode(), $e);
 		}
@@ -324,11 +297,29 @@ class Application extends Module
 	 * Returns the database connection component.
 	 * @return \yii\db\Connection the database connection
 	 */
-	public function getDb()
-	{
-		return $this->getComponent('db');
-	}
+//	public function getDb()
+//	{
+//		return $this->getComponent('db');
+//	}
 
+        
+        /**
+         * connet DB
+         * return (object)CDatabase
+         */
+        public function DB($main = 'main') {
+            return new CDatabase( $main, NULL);
+        }
+        
+        /**
+         * 
+         * @param type $main ( default 'main' )
+         * @return database connet 
+         */
+        
+        public function getDBConnector($main = 'main') {
+           return $this -> DB( $main ) -> getConnection();
+        }
 	
 
 	/**
@@ -346,7 +337,7 @@ class Application extends Module
 	 */
 	public function getView()
 	{
-		return $this->getComponent('view');
+		return new View;
 	}
 
         
@@ -384,12 +375,8 @@ class Application extends Module
 			$msg = (string)$e;
 			$msg .= "\nPrevious exception:\n";
 			$msg .= (string)$exception;
-			if (YII_DEBUG) {
-				if (PHP_SAPI === 'cli') {
-					echo $msg . "\n";
-				} else {
-					echo '<pre>' . htmlspecialchars($msg, ENT_QUOTES, $this->charset) . '</pre>';
-				}
+			if (DEBUG) {
+                            echo '<pre>' . htmlspecialchars($msg, ENT_QUOTES, $this->charset) . '</pre>';
 			}
 			$msg .= "\n\$_SERVER = " . var_export($_SERVER, true);
 			error_log($msg);
@@ -479,45 +466,29 @@ class Application extends Module
 	{
 		if ($exception instanceof Exception && ($exception instanceof UserException || !YII_DEBUG)) {
 			$message = $exception->getName() . ': ' . $exception->getMessage();
-			if (Yii::$app->controller instanceof \yii\console\Controller) {
-				$message = Yii::$app->controller->ansiFormat($message, Console::FG_RED);
-			}
+			
 		} else {
-			$message = YII_DEBUG ? (string)$exception : 'Error: ' . $exception->getMessage();
+			$message = DEBUG ? (string)$exception : 'Error: ' . $exception->getMessage();
 		}
-		if (PHP_SAPI === 'cli') {
-			return $message . "\n";
-		} else {
-			return '<pre>' . htmlspecialchars($message, ENT_QUOTES, $this->charset) . '</pre>';
-		}
+		
+		return '<pre>' . htmlspecialchars($message, ENT_QUOTES, $this->charset) . '</pre>';
+		
 	}
 
-	/**
-	 * Logs the given exception
-	 * @param \Exception $exception the exception to be logged
-	 */
-	protected function logException($exception)
-	{
-		$category = get_class($exception);
-		if ($exception instanceof HttpException) {
-			$category = 'yii\\web\\HttpException:' . $exception->statusCode;
-		} elseif ($exception instanceof \ErrorException) {
-			$category .= ':' . $exception->getSeverity();
-		}
-		Yii::error((string)$exception, $category);
-	}
+	
         
         
         public function registerCoreComponents()
 	{
                 $_components = array(
-			'youtube' =>  PATH_LIBS.'/api/Youtube.php',
-                    
-                        'Google_Client' => PATH_LIBS.'/api/Google/Client.php',
-                        'Google_Service_YouTube' => PATH_LIBS.'/api/Google/Service/YouTube.php',
+//			'youtube' =>  PATH_LIBS.'/api/Youtube.php',
+//                    
+//                        'Google_Client' => PATH_LIBS.'/api/Google/Client.php',
+//                        'Google_Service_YouTube' => PATH_LIBS.'/api/Google/Service/YouTube.php',
                         
+                        'youtube' => PATH_LIBS.'/api/youtubev2/youtube.lib.php'
                     
-			'view' => 'yii\base\View',
+			 //'view'    => PATH_LIBS.'/View.php',
 		);
             
                 foreach($_components as $_id => $_components) {

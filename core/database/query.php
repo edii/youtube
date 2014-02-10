@@ -1,5 +1,7 @@
 <?php
+namespace core\database;
 
+use init;
 /**
  * @addtogroup database
  * @{

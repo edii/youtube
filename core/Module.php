@@ -177,7 +177,7 @@ class Module extends Component
 	 */
 	public function setBasePath($path)
 	{
-		$path = Yii::getAlias($path);
+		// $path = Yii::getAlias($path);
 		$p = realpath($path);
 		if ($p !== false && is_dir($p)) {
 			$this->_basePath = $p;
@@ -243,7 +243,7 @@ class Module extends Component
 		if ($this->_layoutPath !== null) {
 			return $this->_layoutPath;
 		} else {
-			return $this->_layoutPath = $this->getViewPath() . DIRECTORY_SEPARATOR . 'layouts';
+			return $this->_layoutPath = PATH . DIRECTORY_SEPARATOR . 'layouts';
 		}
 	}
 
@@ -497,10 +497,10 @@ class Module extends Component
 		if (is_array($parts)) {
 			/** @var Controller $controller */
 			list($controller, $actionID) = $parts;
-			$oldController = init::$app->controller;
-			init::$app->controller = $controller;
+			$oldController = \init::$app->controller;
+			\init::$app->controller = $controller;
 			$result = $controller->runAction($actionID, $params);
-			init::$app->controller = $oldController;
+			\init::$app->controller = $oldController;
 			return $result;
 		} else {
 			$id = $this->getUniqueId();
@@ -533,26 +533,31 @@ class Module extends Component
 			$route = '';
 		}
 
-		$module = $this->getModule($id);
-		if ($module !== null) {
-			return $module->createController($route);
-		}
+                // load module
+                
+//		$module = $this->getModule($id);
+//		if ($module !== null) {
+//			return $module->createController($route);
+//		}
 
 		if (isset($this->controllerMap[$id])) {
 			$controller = Yii::createObject($this->controllerMap[$id], $id, $this);
 		} elseif (preg_match('/^[a-z0-9\\-_]+$/', $id) && strpos($id, '--') === false && trim($id, '-') === $id) {
-			$className = str_replace(' ', '', ucwords(str_replace('-', ' ', $id))) . 'Controller';
-			$classFile = $this->controllerPath . DIRECTORY_SEPARATOR . $className . '.php';
-			if (!is_file($classFile)) {
-				return false;
-			}
-			$className = ltrim($this->controllerNamespace . '\\' . $className, '\\');
-			init::$classMap[$className] = $classFile;
-			if (is_subclass_of($className, 'core\Controller')) {
-				$controller = new $className($id, $this);
-			} elseif (DEBUG) {
-				throw new Exception("Controller class must extend from \\yii\\base\\Controller.");
-			}
+                    
+                    $this -> setBasePath(PATH.'/mvc/'.$id);
+                    
+                    $className = str_replace(' ', '', ucwords(str_replace('-', ' ', $id))) . 'Controller';
+                    $classFile = $this->controllerPath . DIRECTORY_SEPARATOR . $className . '.php';
+                    if (!is_file($classFile)) {
+                        return false;
+                    }
+                    \init::$classMap[$className] = $classFile;
+                    if (is_subclass_of($className, 'core\Controller')) {
+                        $controller = new $className($id, $this);
+                    }elseif (DEBUG) {
+                        throw new Exception("Controller class must extend from Controller.");
+                    }
+                    
 		}
 
 		return isset($controller) ? [$controller, $route] : false;

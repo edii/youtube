@@ -1,5 +1,9 @@
 <?php
+namespace core\database\mysql;
 
+use init;
+use core\database\InsertQuery as InsertQuery;
+use core\database\TruncateQuery as TruncateQuery;
 /**
  * @addtogroup database
  * @{

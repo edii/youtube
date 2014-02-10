@@ -1,4 +1,8 @@
 <?php
+namespace core\database;
+
+use init;
+use core\Exception as CException;
 /**
  * CDbException class files.
  *

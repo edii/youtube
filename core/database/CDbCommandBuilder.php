@@ -1,4 +1,8 @@
 <?php
+namespace core\database;
+
+use init;
+
 /**
  * CDbCommandBuilder class files.
  *

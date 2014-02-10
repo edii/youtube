@@ -1,5 +1,7 @@
 <?php
+//namespace core\database\mysql;
 
+use core\database\DatabaseConnection as DatabaseConnection;
 /**
  * @file
  * Database interface code for MySQL database servers.

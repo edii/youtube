@@ -27,7 +27,7 @@
     <body>
         
         <div id="content">
-            <?= $content ?>
+            <?php echo $content; ?>
         </div>
         
         <div id="footer">
