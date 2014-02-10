@@ -554,6 +554,7 @@ class Module extends Component
                     \init::$classMap[$className] = $classFile;
                     if (is_subclass_of($className, 'core\Controller')) {
                         $controller = new $className($id, $this);
+                        $controller -> init();
                     }elseif (DEBUG) {
                         throw new Exception("Controller class must extend from Controller.");
                     }

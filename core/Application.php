@@ -70,7 +70,8 @@ class Application extends Module
 	 */
 	private $_memoryReserve;
 
-        
+        public $defaultRouteController = 'home';
+        public $defaultRouteAction = 'index';
 	
 	public function __construct($config = [])
 	{
@@ -144,7 +145,7 @@ class Application extends Module
 	 */
 	public function registerErrorHandlers()
 	{
-		if (YII_ENABLE_ERROR_HANDLER) {
+		if (ENABLE_ERROR_HANDLER) {
 			ini_set('display_errors', 0);
 			set_exception_handler([$this, 'handleException']);
 			set_error_handler([$this, 'handleError'], error_reporting());
@@ -200,8 +201,12 @@ class Application extends Module
 	 */
 	public function handleRequest($request)
 	{
+               $_route = $request -> _getRoute( $request -> getRequestUri());
+               //$_params = $request -> parsePathInfo( strtr(trim($request -> getRequestUri(), '/'), $_route, '')  );
+                
+            
 		if (empty($this->catchAll)) {
-			list ($route, $params) = array('home/index',array('test' => 'BLAAAAAAAAAAAAAAa'));
+			list ($route, $params) = array($_route, $request -> getParams());
 		} else {
 			$route = $this->catchAll[0];
 			$params = array_splice($this->catchAll, 1);
@@ -313,7 +318,8 @@ class Application extends Module
 	 */
 	public function getRequest()
 	{
-		return $this->getComponent('request');
+		// return $this->getComponent('request');
+                return new Request();
 	}
 
 	/**
@@ -471,7 +477,8 @@ class Application extends Module
 //                        'Google_Client' => PATH_LIBS.'/api/Google/Client.php',
 //                        'Google_Service_YouTube' => PATH_LIBS.'/api/Google/Service/YouTube.php',
                         
-                        'youtube' => PATH_LIBS.'/api/youtubev2/youtube.lib.php',
+                        'youtube' => PATH_LIBS.'/api/youtubev2/youtube.php',
+                        // 'request'  => PATH.'/core/Request.php',
                     
                         'DatabaseConnection'        => PATH_LIBS.'/database/database.php',
                         'Database'                  => PATH_LIBS.'/database/database.php',

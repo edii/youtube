@@ -7,6 +7,8 @@ namespace core;
 class Request
 {
 
+    public $_requestUri;
+    
     /**
          * retun (array) $_REQUEST
          */
@@ -34,6 +36,27 @@ class Request
 	{
 		return isset($_POST[$name]) ? $_POST[$name] : $defaultValue;
 	}
+        
+        public function _getRoute( $route ) {
+            if (strpos($route, '/') !== false) {
+                list ($id, $route) = explode('/', $route, 2);
+            } else {
+                    $id = $route;
+                    $route = '';
+            }
+            
+            $_route = $id.'/'.$route;
+            
+            if($_arr = explode('/', trim($_route, '/')) and count($_arr) > 0) {
+                $action = (isset($_arr[1]) and !empty($_arr[1])) ? $_arr[1]: \init::$app ->defaultRouteAction;
+                $_controller = (isset($_arr[0]) and !empty($_arr[0])) ? $_arr[0] : \init::$app -> defaultRouteController;
+                $_route = $_controller.'/'.$action;
+            } else {
+               $_route = \init::$app -> defaultRouteController; 
+            }
+           
+            return $_route;   
+        }
         
         public function getRequestUri()
 	{
@@ -70,5 +93,36 @@ class Request
 		return isset($_SERVER['QUERY_STRING'])?$_SERVER['QUERY_STRING']:'';
 	}
     
+        public function parsePathInfo($pathInfo)
+	{
+                // var_dump( $pathInfo );
+            
+		if($pathInfo==='')
+			return;
+		$segs=explode('/',$pathInfo.'/');
+		$n=count($segs);
+		for($i=0;$i<$n-1;$i+=2)
+		{
+			$key=$segs[$i];
+			if($key==='') continue;
+			$value=$segs[$i+1];
+			if(($pos=strpos($key,'['))!==false && ($m=preg_match_all('/\[(.*?)\]/',$key,$matches))>0)
+			{
+				$name=substr($key,0,$pos);
+				for($j=$m-1;$j>=0;--$j)
+				{
+					if($matches[1][$j]==='')
+						$value=array($value);
+					else
+						$value=array($matches[1][$j]=>$value);
+				}
+				if(isset($_GET[$name]) && is_array($_GET[$name]))
+					$value= array_merge( $_GET[$name], $value);
+				$_REQUEST[$name]=$_GET[$name]=$value;
+			}
+			else
+				$_REQUEST[$key]=$_GET[$key]=$value;
+		}
+	}
         
 }      

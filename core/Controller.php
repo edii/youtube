@@ -131,7 +131,8 @@ class Controller extends Component {
 
 		$actionMap = $this->actions();
 		if (isset($actionMap[$id])) {
-			return Yii::createObject($actionMap[$id], $id, $this);
+                        return null;
+			//return Yii::createObject($actionMap[$id], $id, $this);
 		} elseif (preg_match('/^[a-z0-9\\-_]+$/', $id) && strpos($id, '--') === false && trim($id, '-') === $id) {
                         $methodName = 'action' . str_replace(' ', '', ucwords(implode(' ', explode('-', $id))));
                         
@@ -167,9 +168,6 @@ class Controller extends Component {
 	 */
 	public function afterAction($action, $result)
 	{
-		//$event = new ActionEvent($action);
-		//$event->result = $result;
-		//$this->trigger(self::EVENT_AFTER_ACTION, $event);
 	}
 
 	/**
