@@ -5,7 +5,7 @@
  * @author Sergei Novickiy <edii87shadow@gmail.com>
  * @copyright Copyright &copy; 2013 
  */
-class CDbException extends CException
+class CDbException extends Exception
 {
 	/**
 	 * @var mixed the error info provided by a PDO exception. This is the same as returned

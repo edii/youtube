@@ -99,7 +99,7 @@ class Application extends Module
             return [
                 'main' => [
                     'driver' => 'mysql',
-                    'database' => 'uaua2',
+                    'database' => 'youtube',
                     'username' => 'root',
                     'password' => '',
                     'host' => 'localhost',
@@ -296,21 +296,6 @@ class Application extends Module
 	 * Returns the database connection component.
 	 * @return \yii\db\Connection the database connection
 	 */
-//	public function getDb()
-//	{
-//		return $this->getComponent('db');
-//	}
-
-        
-        /**
-         * connet DB
-         * return (object)CDatabase
-         */
-        public function DB($main = 'main') {
-            //$this->getComponent('request');
-            return new CDatabase( $main, NULL);
-        }
-        
         /**
          * 
          * @param type $main ( default 'main' )

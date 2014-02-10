@@ -1,6 +1,7 @@
 <?php
 
 include PATH_LIBS.'/database/database.php';
+include PATH_LIBS.'/database/CDbException.php';
 
 use core\Application as Application;
 /**
