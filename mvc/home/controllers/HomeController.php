@@ -23,7 +23,7 @@ class HomeController extends core\Controller
 	public function actionIndex() {
             self::$_db = \init::$app -> getDBConnector();
             
-            $_query = self::$_db -> query("SELECT * FROM user") -> fetchAll();
+            $_query = self::$_db -> query("SELECT * FROM banners") -> fetchAll();
             
 //            $_query = self::$db -> query("SELECT userID as id, 
 //                                                     login as login, 

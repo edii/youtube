@@ -1,8 +1,7 @@
 <?php
 
-namespace core\database;
+include PATH_LIBS.'/database/database.php';
 
-use init;
 use core\Application as Application;
 /**
  * CDatabase class files.
@@ -27,20 +26,10 @@ class CDatabase extends Application {
     public $_databaseDefinition;
     public $_boxesDefinition;
     
-    function __construct( $params, $_key = NULL ) {
-        
-        $this->setParams( $params );
+    function __construct( $_key = NULL ) { 
         $this->setKey(  $_key );
-        
-        // set _configs
         $this->_getDb();
-        
-        //if(!empty($properties) and isset($properties))
-          //      $this->setProperties( $properties );
-        
-        // $this->_getDefinitions(); // load definitions from controller
         $this->database();
-        // $this->_loadDbDefionition(); // load definitions
     }
     
     
@@ -126,8 +115,6 @@ class CDatabase extends Application {
                             \init::log($e->getMessage(), \CLogger::LEVEL_ERROR,'exception.CDbException');
                             throw new \CDbException('CDatabase failed to open the DB connection.', (int)$e->getCode(), $e->errorInfo);
                     }
-                    
-                    
                     
                     
                 }

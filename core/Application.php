@@ -2,7 +2,6 @@
 namespace core;
 
 use init;
-use core\database\CDatabase as CDatabase;
 
 class Application extends Module
 {
@@ -100,7 +99,7 @@ class Application extends Module
             return [
                 'main' => [
                     'driver' => 'mysql',
-                    'database' => 'mvc',
+                    'database' => 'uaua2',
                     'username' => 'root',
                     'password' => '',
                     'host' => 'localhost',
@@ -308,6 +307,7 @@ class Application extends Module
          * return (object)CDatabase
          */
         public function DB($main = 'main') {
+            //$this->getComponent('request');
             return new CDatabase( $main, NULL);
         }
         
@@ -318,7 +318,7 @@ class Application extends Module
          */
         
         public function getDBConnector($main = 'main') {
-           return $this -> DB( $main ) -> getConnection();
+           return $this->getComponent('CDatabase') -> getConnection();
         }
 	
 
@@ -486,7 +486,22 @@ class Application extends Module
 //                        'Google_Client' => PATH_LIBS.'/api/Google/Client.php',
 //                        'Google_Service_YouTube' => PATH_LIBS.'/api/Google/Service/YouTube.php',
                         
-                        'youtube' => PATH_LIBS.'/api/youtubev2/youtube.lib.php'
+                        'youtube' => PATH_LIBS.'/api/youtubev2/youtube.lib.php',
+                    
+                        'DatabaseConnection'        => PATH_LIBS.'/database/database.php',
+                        'Database'                  => PATH_LIBS.'/database/database.php',
+                        'DatabaseTransaction'       => PATH_LIBS.'/database/database.php',
+                        'DatabaseStatementBase'     => PATH_LIBS.'/database/database.php',
+                        'DatabaseStatementEmpty'    => PATH_LIBS.'/database/database.php',
+                        'DatabaseLog'               => PATH_LIBS.'/database/log.php',
+                        'DatabaseStatementPrefetch' => PATH_LIBS.'/database/prefetch.php',
+                        'QueryConditionInterface'   => PATH_LIBS.'/database/query.php',
+                        'DatabaseSchema'            => PATH_LIBS.'/database/schema.php',
+
+
+                        'CDbCommandBuilder'     => PATH_LIBS.'/database/CDbCommandBuilder.php',
+                        'CDatabase'             => PATH_LIBS.'/database/CDatabase.php',
+                        'CDbException'          => PATH_LIBS.'/database/CDbException.php',
                     
 			 //'view'    => PATH_LIBS.'/View.php',
 		);

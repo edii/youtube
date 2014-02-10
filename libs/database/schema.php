@@ -1,7 +1,5 @@
 <?php
-namespace core\database;
 
-use init;
 /**
  * @file
  * Generic Database schema code.

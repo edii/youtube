@@ -1,8 +1,5 @@
 <?php
-namespace core\database\mysql;
 
-use init;
-use core\database\DatabaseTasks as DatabaseTasks;
 /**
  * @file
  * Installation code for MySQL embedded database engine.

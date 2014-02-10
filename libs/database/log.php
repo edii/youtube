@@ -1,7 +1,5 @@
 <?php
-namespace core\database;
 
-use init;
 /**
  * @file
  * Logging classes for the database layer.

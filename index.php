@@ -22,4 +22,6 @@ init::$classMap = include('/core/classes.php');
 $application = new core\Application();
 $application->run();
 
-
+echo "<pre>";
+var_dump( init::$classMap );
+echo "</pre>";

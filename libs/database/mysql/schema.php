@@ -1,8 +1,5 @@
 <?php
-namespace core\database\mysql;
 
-use init;
-use core\database\DatabaseSchema as DatabaseSchema;
 /**
  * @file
  * Database schema code for MySQL database servers.
