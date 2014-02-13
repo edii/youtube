@@ -18,7 +18,7 @@ return [
     'InlineAction'    => '/core/actions/InlineAction.php',
     'ViewAction'    => '/core/actions/ViewAction.php',
     
-    
+    'ResizeImages'           => '/core/imagetoolkit/ResizeImages.php',
     
     // youtube libs
     // 'Youtube' => '/libs/api/Youtube.php',   

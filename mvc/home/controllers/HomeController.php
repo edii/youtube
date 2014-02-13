@@ -8,6 +8,7 @@ class HomeController extends core\Controller
 
         protected $_request;
         
+        
         public function init() {
            self::$_db = \init::$app -> getDBConnector();
            $this -> _request = \init::$app -> getRequest();
@@ -29,6 +30,188 @@ class HomeController extends core\Controller
 //            echo "</pre>";
             
             $this->render('form'); 
+            
+        }
+        
+        public function actionUploder() {
+            $content = null;
+            $path = array(
+                1 => 'путь к файлу'
+            );
+            
+            $_path = $path[ rand(1, count($path)) ];
+            
+            if(!empty($n_id) and file_exists($_path)) {
+			//Delete Old Photo START
+			$sql = "SELECT n_photo FROM `news` WHERE n_id=".$n_id;
+                        $result = self::$db -> query($sql) -> fetchAll();
+                        
+                        if(is_array($result) and count($result) > 0) :
+                            foreach($result as $_k => $_item):
+                                $result[$_k] = (array)$_item;
+                            endforeach;
+                        else:
+                            return null;
+                        endif;
+                        
+			$n_photo = array_shift($result)['n_photo'];
+
+			if(is_string($n_photo) && strlen($n_photo)){
+				$n_photo_path = PATH.'/files/origin/'.$n_photo;
+				unlink($n_photo_path);
+			}
+			//Delete Old Photo END
+
+			$n_photo = sprintf('%07u_%u.jpg', $n_id, time());
+			$n_photo_dir = PATH.'/files/origin/';
+			if(!file_exists($n_photo_dir) || !is_dir($n_photo_dir)) mkdir($n_photo_dir, 0777);
+			$n_photo_path = $n_photo_dir.$n_photo;
+
+			$res = move_uploaded_file($_path, $n_photo_path);
+			if($res){
+                            $sql = "UPDATE `news` SET n_photo='$n_photo' WHERE n_id=".$n_id;
+                            self::$db -> query($sql);
+                            $sql_update = "SELECT n_photo FROM `news` WHERE n_id=".$n_id;
+                            $result_update = self::$db ->query($sql_update)-> fetchAll();
+                             if(is_array($result_update) and count($result_update) > 0) :
+                                 foreach($result_update as $_k => $_item):
+                                    $result[$_k] = (array)$_item;
+                                 endforeach;
+                             else:
+                                return null;
+                            endif;
+                            
+                            $content = $result_update;
+			}
+            }
+            return $content;
+        }
+        
+        public function cropIamge() {
+            $_result = false;
+            $_error = false;
+            $_res = array();
+            
+            
+            if($_REQUEST['status'] == 'crop') {
+                    
+                    $filesname = $_REQUEST['filesname'];
+                    $news_id = ($_REQUEST['news_id']) ? $_REQUEST['news_id']: 'init';
+                    
+                    $target_path_75_54 =    PATH . '/files/news/cropr_75x54';
+                    $target_path_115_54 =   PATH . '/files/news/cropr_115x54';
+                    $target_path_180_135 =  PATH . '/files/news/cropr_180x135';
+                    $target_path_300_140 =  PATH . '/files/news/cropr_300x140';
+                    $target_path_610_300 =  PATH . '/files/news/cropr_610x300';
+                    
+                    $target_path_300_167 =  PATH . '/files/news/cropr_300x167';
+                    $target_path_170_110 =  PATH . '/files/news/cropr_170x110';
+                    $target_path_90_90 =    PATH . '/files/news/cropr_90x90';
+                            
+                    $crop_folder = PATH . '/files/news/croprtm';
+                    
+                    if ( ! is_dir($target_path_75_54)) {
+				mkdir($target_path_75_54, 0777, TRUE);
+			}  
+                    
+                    if ( ! is_dir($target_path_115_54)) {
+				mkdir($target_path_115_54, 0777, TRUE);
+			} 
+                        
+                    if ( ! is_dir($target_path_180_135)) {
+				mkdir($target_path_180_135, 0777, TRUE);
+			}    
+                        
+                   if ( ! is_dir($target_path_300_140)) {
+				mkdir($target_path_300_140, 0777, TRUE);
+			}  
+                        
+                   if ( ! is_dir($target_path_610_300)) {
+				mkdir($target_path_610_300, 0777, TRUE);
+			} 
+                        
+                   if ( ! is_dir($target_path_300_167)) {
+				mkdir($target_path_300_167, 0777, TRUE);
+			} 
+                        
+                   if ( ! is_dir($target_path_170_110)) {
+				mkdir($target_path_170_110, 0777, TRUE);
+			}     
+                      
+                   if ( ! is_dir($target_path_90_90)) {
+				mkdir($target_path_90_90, 0777, TRUE);
+			}
+                        
+                    if ( ! is_dir($crop_folder)) {
+				mkdir($crop_folder, 0777, TRUE);
+			}
+                     $tmp_name = PATH .'/files/origin/'.$filesname;   
+                     $_crop_file = $crop_folder.'/'.$filesname;   
+                        
+                    
+                        /* 75x54 */
+                        if(file_exists($target_path_75_54.'/'.$filesname)) {
+                            @unlink($target_path_75_54.'/'.$filesname);
+                        }     
+                        $img = ResizeImages::createImage( $_crop_file );
+                        $img->resize(75, 54)->save($target_path_75_54.'/'.$filesname);
+                        
+                        /* 180x135 */
+                        if(file_exists($target_path_180_135.'/'.$filesname)) {
+                            @unlink($target_path_180_135.'/'.$filesname);
+                        }     
+                        $img = ResizeImages::createImage( $_crop_file );
+                        $img->resize(180, 135)->save($target_path_180_135.'/'.$filesname);
+                        
+                        /* 115x54 */
+                        if(file_exists($target_path_115_54.'/'.$filesname)) {
+                            @unlink($target_path_115_54.'/'.$filesname);
+                        }     
+                        $img = ResizeImages::createImage( $_crop_file );
+                        $img->resize(115, 54)->save($target_path_115_54.'/'.$filesname);
+                        
+                        /* 300x140 */
+                        if(file_exists($target_path_300_140.'/'.$filesname)) {
+                            @unlink($target_path_300_140.'/'.$filesname);
+                        }     
+                        $img = ResizeImages::createImage( $_crop_file );
+                        $img->resize(300, 140)->save($target_path_300_140.'/'.$filesname);
+                        
+                        /* 300x167 */
+                        if(file_exists($target_path_300_167.'/'.$filesname)) {
+                            @unlink($target_path_300_167.'/'.$filesname);
+                        }     
+                        $img = ResizeImages::createImage( $_crop_file );
+                        $img->resize(300, 167)->save($target_path_300_167.'/'.$filesname);
+                        
+                        /* 170x110 */
+                        if(file_exists($target_path_170_110.'/'.$filesname)) {
+                            @unlink($target_path_170_110.'/'.$filesname);
+                        }     
+                        $img = ResizeImages::createImage( $_crop_file );
+                        $img->resize(170, 110)->save($target_path_170_110.'/'.$filesname);
+                        
+                        
+                        /* 90x90 */
+                        if(file_exists($target_path_90_90.'/'.$filesname)) {
+                            @unlink($target_path_90_90.'/'.$filesname);
+                        }     
+                        $img = ResizeImages::createImage( $_crop_file );
+                        $img->resize(90, 90)->save($target_path_90_90.'/'.$filesname);
+                        
+                        
+                        
+                        /* 610x300 */
+                        if(file_exists($target_path_610_300.'/'.$filesname)) {
+                            @unlink($target_path_610_300.'/'.$filesname);
+                        }     
+                        $img = ResizeImages::createImage( $_crop_file );
+                        // $img->resize(610, 300)->save($target_path_610_300.'/'.$filesname);
+                        $img->cropCenter('610px', '300px')->save($target_path_610_300.'/'.$filesname);
+                        
+                        $_res = array('result' => true, 'error' => $_error, 'filename' => $filesname, 'stime' => time());
+                        return $res;
+            }        
             
         }
         
@@ -94,7 +277,6 @@ class HomeController extends core\Controller
             endif;
             
             $_result['result'] = $videos;
-            
             echo json_encode( $_result );
         }
 }

@@ -332,6 +332,8 @@ class Application extends Module
 	}
 
         
+        
+        
         public function getYoutube() {
             return $this->getComponent( 'youtube' );
         }
