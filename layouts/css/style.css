@@ -114,6 +114,8 @@ a.close {
 .form {
 	width: 387px;
 	margin: 0 auto;
+        padding-bottom: 50px;
+        padding-top: 50px;
 }
 
 .show {
@@ -237,6 +239,19 @@ border:0;
 }
 
 /* =======================// item listing ================= */
+
+.result-listing ul {
+    margin: 0 auto;
+}
+
+.result-listing li, .result-listing ul {
+    width: 500px;
+} 
+
+.result-listing li {
+    list-style: none;
+}
+
 div.item {
     border-top: solid black 1px;
     margin: 10px;
@@ -247,10 +262,11 @@ div.item {
 .item p{
     display: block;
     overflow: hidden;
+    margin: 5px 0;
 }
 span.thumbnail {
     float: left;
-    margin-right: 20px;
+    margin: 5px;
     padding: 2px;
     border: solid silver 1px;
     font-size: x-small;
@@ -261,7 +277,7 @@ span.attr {
 }
 span.title {
     font-weight: bolder;
-    font-size: x-large;
+    margin: 5px 0;
 }
 img {
     border: 0px;

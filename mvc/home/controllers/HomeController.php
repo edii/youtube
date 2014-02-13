@@ -58,7 +58,7 @@ class HomeController extends core\Controller
                     if(!$_get_url 
                             or (isset($_get_url['user']) and empty($_get_url['user']))
                             or !isset($_get_url['user'])) 
-                        $_result['error'] = ' Введите праельно youtube url! ';
+                        $_result['error'] = ' Введите правельно youtube url! ';
                     
                     $_channel_address = $_get_url['user'];
                 } 
@@ -86,6 +86,12 @@ class HomeController extends core\Controller
 
         //    $_video = $yt->getSingleVideo("6bmsspD5_bY");
         //    
+            
+            if(is_array($videos) and count($videos) > 0) :
+                foreach($videos as $key => $_item):
+                    $videos[$key]['embed'] = $_youtube->getEmbedHTML( $_item );
+                endforeach;
+            endif;
             
             $_result['result'] = $videos;
             

@@ -55,7 +55,7 @@ function setSubmit(responseText, statusText, xhr, $form) {
                                 html += "<p>"+video.description+"</p>";
                                 html += "<p>";
                                     html += "<span class='thumbnail'>";
-                                        // html += video.embed;
+                                         html += video.embed;
                                     html += "</span>";
                                     html += "<span class='attr'>By:</span> "+video.author.name+" <br/>";
                                     html += "<span class='attr'>Duration:</span> "+video.duration+" min. <br/>";
