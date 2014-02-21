@@ -33,10 +33,72 @@ class HomeController extends core\Controller
             
         }
         
+        public function actionUpladerFiles() {
+            $path = array(
+                1 => PATH.'/files_sections/beremenost_and_rodyi/image1.png',
+                2 => PATH.'/files_sections/beremenost_and_rodyi/image2.png',
+            );
+            $_path = $path[ rand(1, count($path)) ]; 
+            
+            if(file_exists($_path)) {
+                //Delete Old Photo START
+                $sql = "SELECT n_id, n_photo FROM `news` WHERE n_s_id IN (2153,2154,2155)";
+                $result = self::$db -> query($sql) -> fetchAll();
+
+                if(is_array($result) and count($result) > 0) :
+                    foreach($result as $_k => $_item):
+                        $result[$_k] = (array)$_item;
+                    endforeach;
+                else:
+                    return null;
+                endif;
+
+                $news = array_shift($result);
+                
+                if(!is_array($news) or count($news) < 0 or !isset($news['n_photo'])) return false;
+                
+                $n_photo = $news['n_photo'];
+                $n_id = $news['n_id'];
+
+                if(is_string($n_photo) && strlen($n_photo)){
+                        $n_photo_path = PATH.'/files/origin/'.$n_photo;
+                        unlink($n_photo_path);
+                }
+                //Delete Old Photo END
+
+                $n_photo = sprintf('%07u_%u.jpg', $n_id, time());
+                $n_photo_dir = PATH.'/files/origin/';
+                if(!file_exists($n_photo_dir) || !is_dir($n_photo_dir)) mkdir($n_photo_dir, 0777);
+                $n_photo_path = $n_photo_dir.$n_photo;
+
+                $res = move_uploaded_file($_path, $n_photo_path);
+                
+                if($res){
+                    $sql = "UPDATE `news` SET n_photo='$n_photo' WHERE n_id=".$n_id;
+                    self::$db -> query($sql);
+//                    $sql_update = "SELECT n_photo FROM `news` WHERE n_id=".$n_id;
+//                    $result_update = self::$db ->query($sql_update)-> fetchAll();
+//                     if(is_array($result_update) and count($result_update) > 0) :
+//                         foreach($result_update as $_k => $_item):
+//                            $result[$_k] = (array)$_item;
+//                         endforeach;
+//                     else:
+//                        return null;
+//                    endif;
+
+                    if(!$this->cropIamge($n_id,$n_photo)) die('Not load n_photo = '.$n_photo.' n_id = '.$n_id);
+                    
+                    return true;
+                }
+                
+            }
+            
+        }
+        
         public function actionUploder() {
             $content = null;
             $path = array(
-                1 => 'путь к файлу'
+                1 => ''
             );
             
             $_path = $path[ rand(1, count($path)) ];
@@ -87,16 +149,14 @@ class HomeController extends core\Controller
             return $content;
         }
         
-        public function cropIamge() {
+        public function cropIamge($news_id, $filesname ) {
             $_result = false;
             $_error = false;
             $_res = array();
             
             
-            if($_REQUEST['status'] == 'crop') {
+            if((int)$news_id != false) {
                     
-                    $filesname = $_REQUEST['filesname'];
-                    $news_id = ($_REQUEST['news_id']) ? $_REQUEST['news_id']: 'init';
                     
                     $target_path_75_54 =    PATH . '/files/news/cropr_75x54';
                     $target_path_115_54 =   PATH . '/files/news/cropr_115x54';
@@ -209,9 +269,11 @@ class HomeController extends core\Controller
                         // $img->resize(610, 300)->save($target_path_610_300.'/'.$filesname);
                         $img->cropCenter('610px', '300px')->save($target_path_610_300.'/'.$filesname);
                         
-                        $_res = array('result' => true, 'error' => $_error, 'filename' => $filesname, 'stime' => time());
-                        return $res;
-            }        
+                        //$_res = array('result' => true, 'error' => $_error, 'filename' => $filesname, 'stime' => time());
+                        return true;
+            } else {  
+                return false;
+            }
             
         }
         
