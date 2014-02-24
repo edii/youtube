@@ -11,7 +11,7 @@
 namespace core\imagetoolkit;
 
 require_once 'AcImage.php';
-require_once '/geometry/exceptions.php';
+require_once 'geometry/exceptions.php';
 
 use core\imagetoolkit\AcImage as AcImage;
 use core\imagetoolkit\geometry\UnsupportedFormatException as UnsupportedFormatException;

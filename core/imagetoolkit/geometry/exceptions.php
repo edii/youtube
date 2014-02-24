@@ -12,7 +12,7 @@ namespace core\imagetoolkit\geometry;
 
 use \Exception;
 
-class FileNotFoundException extends Exception
+class FileNotFoundException extends \Exception
 {
 	const MESSAGE = 'File not found';
 

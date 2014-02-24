@@ -45,7 +45,7 @@ use core\imagetoolkit\geometry\IllegalArgumentException as IllegalArgumentExcept
  * Класс, описывающий изображение, и содержащий методы для работы с ним.
  */
 
-class AcImage extends \Component
+class AcImage // extends \Component
 {
 	const PNG = 'image/png';
 	const JPEG = 'image/jpeg';

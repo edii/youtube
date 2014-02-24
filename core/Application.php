@@ -100,10 +100,10 @@ class Application extends Module
             return [
                 'main' => [
                     'driver' => 'mysql',
-                    'database' => 'youtube',
-                    'username' => 'root',
-                    'password' => '',
-                    'host' => 'localhost',
+                    'database' => 'uaua_p',
+                    'username' => 'airweb',
+                    'password' => 'ErvikVobImJitOst',
+                    'host' => '94.45.138.166',
                     'prefix' => '',
                     ]  
             ];
